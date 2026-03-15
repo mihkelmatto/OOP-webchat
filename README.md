@@ -1,11 +1,12 @@
 # OOP rühmatöö plaan
 
 Online chat rakendus (server + klient).
-**Liikmed**
-Oskar Austa (github: oskarasd123)
-Mihkel Matto (github: mihkelmatto)
-Raimond Olle (github: RaimondOlle
-Mattias Volt (github: moosipea)
+
+## Liikmed
+Oskar Austa (github: oskarasd123) <br>
+Mihkel Matto (github: mihkelmatto) <br>
+Raimond Olle (github: RaimondOlle <br>
+Mattias Volt (github: moosipea) <br>
 
 
 
