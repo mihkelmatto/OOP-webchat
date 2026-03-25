@@ -4,17 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="90b41639-bd56-43f6-af8f-05ff91505e64" name="Changes" comment="pom.xml failid">
-      <change afterPath="$PROJECT_DIR$/client/src/main/java/client/Main.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/common/src/main/java/common/Utils.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/server/src/main/java/server/Main.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+    <list default="true" id="90b41639-bd56-43f6-af8f-05ff91505e64" name="Changes" comment="nüüd on failid õiges kohas">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Connection.java" beforeDir="false" afterPath="$PROJECT_DIR$/common/src/main/java/common/Connection.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ConnectionClientTest.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ConnectionServerTest.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/client/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/server/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/common/src/main/java/common/Connection.java" beforeDir="false" afterPath="$PROJECT_DIR$/common/src/main/java/common/Connection.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -35,6 +28,9 @@
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="ProblemsViewState">
+    <option name="selectedTabId" value="DEPENDENCY_CHECKER_PROBLEMS_TAB" />
   </component>
   <component name="ProjectColorInfo">{
   &quot;customColor&quot;: &quot;&quot;,
@@ -60,6 +56,11 @@
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="\\wsl.localhost\Ubuntu\home\mattiasvolt\Projects\OOP-webchat\common\src\main\java\common" />
+    </key>
+  </component>
   <component name="RunManager" selected="JAR Application.server-1.0-SNAPSHOT.jar">
     <configuration name="client-1.0-SNAPSHOT.jar" type="JarApplication" temporary="true">
       <option name="JAR_PATH" value="$PROJECT_DIR$/client/target/client-1.0-SNAPSHOT.jar" />
@@ -101,7 +102,7 @@
       <option name="presentableId" value="Default" />
       <updated>1774352298106</updated>
       <workItem from="1774352300039" duration="3361000" />
-      <workItem from="1774427378261" duration="1080000" />
+      <workItem from="1774427378261" duration="1894000" />
     </task>
     <task id="LOCAL-00001" summary="pom.xml failid">
       <option name="closed" value="true" />
@@ -111,7 +112,15 @@
       <option name="project" value="LOCAL" />
       <updated>1774427450913</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="nüüd on failid õiges kohas">
+      <option name="closed" value="true" />
+      <created>1774428490337</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1774428490337</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -119,6 +128,7 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="pom.xml failid" />
-    <option name="LAST_COMMIT_MESSAGE" value="pom.xml failid" />
+    <MESSAGE value="nüüd on failid õiges kohas" />
+    <option name="LAST_COMMIT_MESSAGE" value="nüüd on failid õiges kohas" />
   </component>
 </project>
