@@ -52,7 +52,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>oop.pirukas.client.Main</mainClass>
+                            <mainClass>client.Main</mainClass>
                         </manifest>
                     </archive>
                 </configuration>

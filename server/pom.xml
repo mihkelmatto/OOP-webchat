@@ -39,7 +39,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>oop.pirukas.server.Main</mainClass>
+                            <mainClass>server.Main</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
