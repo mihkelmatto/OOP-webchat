@@ -1,20 +1,20 @@
 import java.util.ArrayList;
 
 public class Conversation {
-    private int id;
+    private int convID;
     private User owner;
-    private ArrayList<User> participants;
+    private ArrayList<User> members;
     private ArrayList<Entry> messages;
 
     private int entryID;
 
     /*
-    id - unique id for this conversation.
+    convID - unique id for this conversation.
         TODO: automatically manage id
 
-    owner - has permissions to add/remove participants
+    owner - has permissions to add/remove members
     
-    participants: internal users list
+    members: internal users list
         can be managed by owner
         used for:
         - creating entries to this.messages
@@ -22,16 +22,19 @@ public class Conversation {
 
     messages: ArrayList<Entry>, see Entry class for more info
     entryID: internal counter & instance field value for entries. !! Dont change outside of this.addmessage()
+
+
+    TODO: Check access modifiers for all classes in the branch
     */
 
-    public Conversation(int id, User owner){
-        this.id = id;
+    public Conversation(int convID, User owner){
+        this.convID = convID;
         this.owner = owner;
-        this.participants = new ArrayList<User>();
+        this.members = new ArrayList<User>();
         this.messages = new ArrayList<Entry>();
         this.entryID = 0;
 
-        this.participants.add(owner);
+        this.members.add(owner);
 
         System.out.printf("""
                 Chat created
@@ -40,29 +43,53 @@ public class Conversation {
     }
 
     /*
-    
-    Manage members
-    
+    Addmember:
+    - only usable by owner
+    - no duplicates
     */
-
-    public void addMember(User member){
-        if(this.participants.contains(member)){
-            System.out.printf("Member %s already in conversation %s\n", member.getUsername(), this.id);
+    void addMember(User caller, User member){
+        if(!this.owner.equals(caller)){
+            System.out.printf("Can't add to conversation %s: no permissions.\n", caller.getUsername());
+            return;
+        }
+        if(this.members.contains(member)){
+            System.out.printf("Member %s already in conversation %s\n", member.getUsername(), this.convID);
             return;
         }
 
-        this.participants.add(member);
-        System.out.printf("Member %s added to conversation %s\n", member.getUsername(), this.id);
+        this.members.add(member);
+        System.out.printf("Member %s added to conversation %s\n", member.getUsername(), this.convID);
     }
 
-    // TODO: delete conversation when member count reaches 0
-    public void removeMember(User member){
-        if(this.participants.contains(member)){
-            this.participants.remove(member);
-            System.out.printf("Member %s removed from conversation %s\n", member.getUsername(), this.id);
+    /*
+    Removes a member from the conversation
+
+    Validation:
+    - only owners can remove other Users
+    - users can use this to leave
+    - owners can't leave,
+    - member has to exist
+    - can't remove owner
+    */
+
+    void removeMember(User caller, User member){
+        String errormsg = null;
+        boolean validrequest = true;
+
+        if(!this.owner.equals(caller)){
+            
+        }
+        if(caller.equals(member)){
+            errormsg = String.format("can't remove the owner", null);
+        }
+
+
+        if(this.members.contains(member)){
+            this.members.remove(member);
+            System.out.printf("Member %s removed from conversation %s\n", member.getUsername(), this.convID);
         }
         else{
-            System.out.printf("Member %s can't be removed from conversation %s\n", member.getUsername(), this.id);
+            System.out.printf("Member %s can't be removed from conversation %s\n", member.getUsername(), this.convID);
         }
     }
 
@@ -72,18 +99,16 @@ public class Conversation {
 
     */
 
-    public void addMessage(User sender, String message){
+    void addMessage(User sender, String message){
         this.messages.add(new Entry(this.entryID++, sender, message));
     }
 
-    public void removeMessage(Entry message){
+    void removeMessage(Entry message){
         this.messages.remove(message);
     }
 
     /*
-    
     Get chat info (String, print)
-
     */
 
     public void printAll(){
@@ -99,15 +124,15 @@ public class Conversation {
         return String.format("""
                 Chat ID: %s
                 Owner: %s
-                Participants: %s
+                Members: %s
                 Message count: %s
-                """,this.id, this.owner.getUsername(), this.strParticipants(), this.messages.size());
+                """,this.convID, this.owner.getUsername(), this.strMembers(), this.messages.size());
     }
 
-    private String strParticipants(){
+    private String strMembers(){
         StringBuilder temp = new StringBuilder();
-        for(User participant : participants){
-            temp.append(participant.getUsername() + ", ");
+        for(User member : members){
+            temp.append(member.getUsername() + ", ");
         }
         temp.delete(Math.max(0, temp.length()-2), temp.length());
 
