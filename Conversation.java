@@ -36,10 +36,7 @@ public class Conversation {
 
         this.members.add(owner);
 
-        System.out.printf("""
-                Chat created
-                %s
-                """, this.toString());
+        System.out.printf("Chat created with ID: %s\n", this.convID);
     }
 
     /*
@@ -48,17 +45,28 @@ public class Conversation {
     - no duplicates
     */
     void addMember(User caller, User member){
+        String msg = null;
+        boolean validrequest = true;
+
+        // validation
         if(!this.owner.equals(caller)){
-            System.out.printf("Can't add to conversation %s: no permissions.\n", caller.getUsername());
-            return;
+            validrequest = false;
+            msg = "This can only be done by the owner";
         }
-        if(this.members.contains(member)){
-            System.out.printf("Member %s already in conversation %s\n", member.getUsername(), this.convID);
+        else if(this.members.contains(member)){
+            validrequest = false;
+            msg = String.format("%s is already a member", member.getUsername());
+        }
+
+        // error message
+        if(!validrequest){
+            System.out.printf("Member couldn't be added to chat %s: %s\n", this.convID, msg);
             return;
         }
 
+        // add user
         this.members.add(member);
-        System.out.printf("Member %s added to conversation %s\n", member.getUsername(), this.convID);
+        System.out.printf("Member %s added to chat %s\n", member.getUsername(), this.convID);
     }
 
     /*
@@ -73,23 +81,37 @@ public class Conversation {
     */
 
     void removeMember(User caller, User member){
-        String errormsg = null;
+        String msg = null;
         boolean validrequest = true;
 
+        // validation
         if(!this.owner.equals(caller)){
-            
+            validrequest = false;
+            msg = "This can only be used by the owner";
         }
+        else if(caller.equals(this.owner)){
+            validrequest = false;
+            msg = "Owner can't be removed.";
+        }
+        else if(!members.contains(member)){
+            validrequest = false;
+            msg = String.format("Member '%s' not found", member.getUsername());
+        }
+
+        // error message
+        if(!validrequest){
+            System.out.printf("User %s can't be removed from chat %s : %s\n", member.getUsername(), this.convID, msg);
+            return;
+        }
+
+        // removal
+        this.members.remove(member);
+
         if(caller.equals(member)){
-            errormsg = String.format("can't remove the owner", null);
-        }
-
-
-        if(this.members.contains(member)){
-            this.members.remove(member);
-            System.out.printf("Member %s removed from conversation %s\n", member.getUsername(), this.convID);
+            System.out.printf("User %s left from chat %s\n", member.getUsername(), this.convID);
         }
         else{
-            System.out.printf("Member %s can't be removed from conversation %s\n", member.getUsername(), this.convID);
+            System.out.printf("User %s removed from chat %s\n", member.getUsername(), this.convID);
         }
     }
 
@@ -112,6 +134,7 @@ public class Conversation {
     */
 
     public void printAll(){
+        System.out.printf("\nAll messages from chat %s: \n\n", this.convID);
         for(Entry entry : this.messages){
             System.out.println(entry);
         }

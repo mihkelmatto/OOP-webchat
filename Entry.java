@@ -24,11 +24,10 @@ public class Entry {
         String formatted = this.timestamp.format(formatter);
 
         return String.format("""
-                Message index: %s
                 Sender: %s
                 Timestamp: %s
                 Content: %s
-                """,this.index, this.sender.getUsername(), formatted, this.content);
+                """, this.sender.getUsername(), formatted, this.content);
     }
 
     public int getIndex(){
