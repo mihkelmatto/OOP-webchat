@@ -1,0 +1,12 @@
+.pirukas-bold {
+    -fx-font-weight: bold;
+}
+
+.pirukas-italic {
+    -fx-font-style: italic;
+}
+
+.pirukas-mention {
+    -fx-background-color: antiquewhite;
+    -fx-font-family: monospace;
+}

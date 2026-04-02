@@ -13,8 +13,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 
 public class Connection implements Runnable{
-    private Map<String, List<Consumer<byte[]>>> subscribers;
-    private Socket sock;
+    private final Map<String, List<Consumer<byte[]>>> subscribers;
+    private final Socket sock;
     private boolean running;
 
     public Connection(Socket sock){

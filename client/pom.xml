@@ -52,7 +52,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>client.Main</mainClass>
+                            <mainClass>client.ClientMain</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
@@ -69,6 +69,15 @@
                         <goals><goal>shade</goal></goals>
                     </execution>
                 </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.openjfx</groupId>
+                <artifactId>javafx-maven-plugin</artifactId>
+                <version>0.0.8</version>
+                <configuration>
+                    <mainClass>client.ClientMain</mainClass>
+                </configuration>
             </plugin>
         </plugins>
     </build>

@@ -4,10 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="90b41639-bd56-43f6-af8f-05ff91505e64" name="Changes" comment="nüüd on failid õiges kohas">
+    <list default="true" id="90b41639-bd56-43f6-af8f-05ff91505e64" name="Changes" comment="vaade eraldi stseeni klassis ja kanalite vaade vasakul">
+      <change afterPath="$PROJECT_DIR$/client/src/main/java/client/LoginScene.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/common/src/main/java/common/Connection.java" beforeDir="false" afterPath="$PROJECT_DIR$/common/src/main/java/common/Connection.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/main/java/client/ClientMain.java" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/java/client/ClientMain.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -24,13 +24,13 @@
   <component name="Git.Settings">
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$" value="project_setup" />
+        <entry key="$PROJECT_DIR$" value="basic_client" />
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="ProblemsViewState">
-    <option name="selectedTabId" value="DEPENDENCY_CHECKER_PROBLEMS_TAB" />
+    <option name="selectedTabId" value="CurrentFile" />
   </component>
   <component name="ProjectColorInfo">{
   &quot;customColor&quot;: &quot;&quot;,
@@ -45,13 +45,17 @@
   "keyToString": {
     "JAR Application.client-1.0-SNAPSHOT.jar.executor": "Run",
     "JAR Application.server-1.0-SNAPSHOT.jar.executor": "Run",
+    "Maven.pirukas [javafx:run].executor": "Run",
+    "Maven.pirukas [jfx:run].executor": "Run",
+    "Maven.pirukas [package].executor": "Run",
     "ModuleVcsDetector.initialDetectionPerformed": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
     "RunOnceActivity.git.unshallow": "true",
     "RunOnceActivity.typescript.service.memoryLimit.init": "true",
-    "git-widget-placeholder": "päris__projekti__struktuur",
+    "git-widget-placeholder": "channel__view",
     "kotlin-language-version-configured": "true",
+    "nodejs_package_manager_path": "npm",
     "settings.editor.selected.configurable": "preferences.keymap",
     "vue.rearranger.settings.migration": "true"
   }
@@ -61,7 +65,14 @@
       <recent name="\\wsl.localhost\Ubuntu\home\mattiasvolt\Projects\OOP-webchat\common\src\main\java\common" />
     </key>
   </component>
-  <component name="RunManager" selected="JAR Application.server-1.0-SNAPSHOT.jar">
+  <component name="RunAnythingCache">
+    <option name="myCommands">
+      <command value="mvn package" />
+      <command value="mvn jfx:run" />
+      <command value="mvn javafx:run" />
+    </option>
+  </component>
+  <component name="RunManager" selected="JAR Application.client-1.0-SNAPSHOT.jar">
     <configuration name="client-1.0-SNAPSHOT.jar" type="JarApplication" temporary="true">
       <option name="JAR_PATH" value="$PROJECT_DIR$/client/target/client-1.0-SNAPSHOT.jar" />
       <method v="2" />
@@ -70,19 +81,10 @@
       <option name="JAR_PATH" value="$PROJECT_DIR$/server/target/server-1.0-SNAPSHOT.jar" />
       <method v="2" />
     </configuration>
-    <configuration default="true" type="JetRunConfigurationType">
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
-    <configuration default="true" type="KotlinStandaloneScriptRunConfigurationType">
-      <option name="filePath" />
-      <method v="2" />
-    </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="JAR Application.server-1.0-SNAPSHOT.jar" />
         <item itemvalue="JAR Application.client-1.0-SNAPSHOT.jar" />
+        <item itemvalue="JAR Application.server-1.0-SNAPSHOT.jar" />
       </list>
     </recent_temporary>
   </component>
@@ -103,6 +105,7 @@
       <updated>1774352298106</updated>
       <workItem from="1774352300039" duration="3361000" />
       <workItem from="1774427378261" duration="1894000" />
+      <workItem from="1774442676453" duration="10179000" />
     </task>
     <task id="LOCAL-00001" summary="pom.xml failid">
       <option name="closed" value="true" />
@@ -120,7 +123,39 @@
       <option name="project" value="LOCAL" />
       <updated>1774428490337</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="hello world gui">
+      <option name="closed" value="true" />
+      <created>1774443123286</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1774443123286</updated>
+    </task>
+    <task id="LOCAL-00004" summary="formatted teksti renderimine">
+      <option name="closed" value="true" />
+      <created>1774447266099</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1774447266099</updated>
+    </task>
+    <task id="LOCAL-00005" summary="rohkem sõnumeid">
+      <option name="closed" value="true" />
+      <created>1774449158167</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1774449158167</updated>
+    </task>
+    <task id="LOCAL-00006" summary="vaade eraldi stseeni klassis ja kanalite vaade vasakul">
+      <option name="closed" value="true" />
+      <created>1774522472602</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1774522472602</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -129,6 +164,10 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="pom.xml failid" />
     <MESSAGE value="nüüd on failid õiges kohas" />
-    <option name="LAST_COMMIT_MESSAGE" value="nüüd on failid õiges kohas" />
+    <MESSAGE value="hello world gui" />
+    <MESSAGE value="formatted teksti renderimine" />
+    <MESSAGE value="rohkem sõnumeid" />
+    <MESSAGE value="vaade eraldi stseeni klassis ja kanalite vaade vasakul" />
+    <option name="LAST_COMMIT_MESSAGE" value="vaade eraldi stseeni klassis ja kanalite vaade vasakul" />
   </component>
 </project>

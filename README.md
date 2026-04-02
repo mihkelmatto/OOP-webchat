@@ -1,5 +1,7 @@
 # OOP rühmatöö plaan
 
+NB! Praegu kliendi dev versiooni käivitamiseks minna client kausta ja jooksutata `mvn javafx:run`.
+
 Online chat rakendus (server + klient).
 
 ## Liikmed
