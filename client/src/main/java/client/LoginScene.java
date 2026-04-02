@@ -2,8 +2,10 @@ package client;
 
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
 import java.util.function.Consumer;
@@ -25,9 +27,9 @@ public class LoginScene extends Scene {
         });
 
         setRoot(new VBox(
-                ipField,
-                userField,
-                passField,
+                new HBox(new Label("IP"), ipField),
+                new HBox(new Label("username"), userField),
+                new HBox(new Label("password"), passField),
                 loginButton
         ));
     }
