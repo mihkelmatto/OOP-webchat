@@ -93,11 +93,11 @@ public class Conversation {
         boolean validrequest = true;
 
         // validation
-        if(!this.owner.equals(caller)){
+        if(!this.owner.equals(caller) && !caller.equals(member)){
             validrequest = false;
             msg = "This can only be used by the owner";
         }
-        else if(caller.equals(this.owner)){
+        else if(member.equals(this.owner)){
             validrequest = false;
             msg = "Owner can't be removed.";
         }
@@ -151,7 +151,7 @@ public class Conversation {
             validrequest = false;
             msg = String.format("%s is not in this conversation", caller.getUsername());
         }
-        else if(entry.getSender().equals(caller)){
+        else if(!entry.getSender().equals(caller)){
             validrequest = false;
             msg = "message can only be deleted by the author";   
         }
