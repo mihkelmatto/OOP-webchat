@@ -5,11 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="90b41639-bd56-43f6-af8f-05ff91505e64" name="Changes" comment="mingi login tüüpi asi. praegu tegelt ei kontrolli kasutajatunnuseid, ainult visuaal">
-      <change afterPath="$PROJECT_DIR$/server/src/main/java/server/ServerConnection.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/common/src/main/java/common/Connection.java" beforeDir="false" afterPath="$PROJECT_DIR$/common/src/main/java/common/Connection.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/server/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/src/main/java/server/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/main/java/server/ServerMain.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/main/java/server/ServerConnection.java" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/main/java/server/ServerConnection.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/main/java/server/ServerMain.java" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/main/java/server/ServerMain.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -56,7 +54,7 @@
     "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
     "RunOnceActivity.git.unshallow": "true",
     "RunOnceActivity.typescript.service.memoryLimit.init": "true",
-    "git-widget-placeholder": "basic__client",
+    "git-widget-placeholder": "serveri__eksperiment",
     "kotlin-language-version-configured": "true",
     "last_opened_file_path": "//wsl.localhost/Ubuntu/home/mattiasvolt/Projects/OOP-webchat",
     "nodejs_package_manager_path": "npm",
@@ -100,9 +98,9 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Application.ServerMain" />
         <item itemvalue="JAR Application.server-1.0-SNAPSHOT.jar" />
         <item itemvalue="JAR Application.client-1.0-SNAPSHOT.jar" />
-        <item itemvalue="Application.ServerMain" />
         <item itemvalue="JAR Application.server-1.0-SNAPSHOT.jar" />
         <item itemvalue="JAR Application.client-1.0-SNAPSHOT.jar" />
       </list>

@@ -6,11 +6,16 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayDeque;
+import java.util.Queue;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 import java.util.function.Consumer;
 
 public class ServerConnection implements Runnable {
     private volatile boolean stillRunning = true;
     private Consumer<RawMessage> consumer;
+    private Queue<String> messageQueue = new LinkedBlockingQueue<>();
 
     public ServerConnection(Consumer<RawMessage> consumer) {
         this.consumer = consumer;
@@ -24,10 +29,21 @@ public class ServerConnection implements Runnable {
                  BufferedReader in = new BufferedReader(new InputStreamReader(client.getInputStream()))
             ) {
                 while (stillRunning) {
+                    // Send to client
+                    String newMessage;
+                    while ((newMessage = messageQueue.poll()) != null) {
+                        out.write("incoming message: " + newMessage + "\n");
+                        out.flush();
+                    }
+
+                    // Read from client
                     String messageFromClient = in.readLine();
-                    consumer.accept(new RawMessage(messageFromClient, 1));
-                    out.write("echo: " + messageFromClient + "\n");
-                    out.flush();
+                    if (!messageFromClient.equals("exit")) {
+                        consumer.accept(new RawMessage(messageFromClient, client.getLocalAddress().hashCode()));
+                        sendClientMessage("(echo)" + messageFromClient);
+                    } else {
+                        endConnection();
+                    }
                 }
             }
         } catch (IOException e) {
@@ -37,6 +53,10 @@ public class ServerConnection implements Runnable {
 
     public synchronized void endConnection() {
         this.stillRunning = false;
+    }
+
+    public synchronized void sendClientMessage(String message) {
+        messageQueue.add(message);
     }
 
     public record RawMessage(String content, int ip) {
