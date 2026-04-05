@@ -27,7 +27,6 @@ public class ConnectionHandler implements Runnable, Closeable {
                     try {
                         String line = in.readLine();
                         if (line != null) {
-                            System.out.println("line = " + line);
                             broadcastMessage(line, false);
                         }
                     } catch (IOException ignored) {
@@ -36,7 +35,7 @@ public class ConnectionHandler implements Runnable, Closeable {
                 }
             });
 
-            addClientMessage("Welcome to the test server!");
+            queueClientMessage("Welcome to the test server!");
 
             while (!Thread.currentThread().isInterrupted()) {
                 String message = localMessageEvents.take();
@@ -58,7 +57,7 @@ public class ConnectionHandler implements Runnable, Closeable {
         allConnectionHandlers.remove(this);
     }
 
-    private synchronized void addClientMessage(String message) {
+    private synchronized void queueClientMessage(String message) {
         localMessageEvents.add(message);
     }
 
@@ -67,7 +66,7 @@ public class ConnectionHandler implements Runnable, Closeable {
             if (ignoreSelf && conn == this) {
                 continue;
             }
-            conn.addClientMessage(message);
+            conn.queueClientMessage(message);
         }
     }
 }
