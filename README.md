@@ -1,8 +1,9 @@
-# serveri_eksperiment
-NB! Kuidas testida: käivita server (intellij kaudu või buildi maveniga ja käivita jar), seejärel võid kasutada näiteks telneti ühendamiseks (`telnet localhost 6969`).
-
 # OOP rühmatöö plaan
 
+## I etapi lõpuks
+On lihtne UI, teksti vormindamine ja lihtne võrgusuhtlus.
+
+NB! Kuidas serverit testida: käivita server (intellij kaudu või buildi maveniga ja käivita jar), seejärel võid kasutada näiteks telneti ühendamiseks (`telnet localhost 6969`).
 NB! Praegu kliendi dev versiooni käivitamiseks minna client kausta ja jooksutata `mvn javafx:run`.
 
 Online chat rakendus (server + klient).
@@ -10,10 +11,8 @@ Online chat rakendus (server + klient).
 ## Liikmed
 Oskar Austa (github: oskarasd123) <br>
 Mihkel Matto (github: mihkelmatto) <br>
-Raimond Olle (github: RaimondOlle <br>
+Raimond Olle (github: RaimondOlle) <br>
 Mattias Volt (github: moosipea) <br>
-
-
 
 ## Põhifunktsionaalsused (peab kindlasti olema):
 -   reaalajas sõnumivahetus
