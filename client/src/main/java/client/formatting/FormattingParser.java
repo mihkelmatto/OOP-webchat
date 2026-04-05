@@ -1,4 +1,8 @@
 // Parser ühest minu varasemast projektist -- MV
+// Ehk siis hindamise mõttes, see on ikka spetsiifiliselt selle rühmatöö jaoks
+// loodud (st mitte lihtsalt copy pastitud kuskilt), aga ma tegin selle valmis
+// iseseisva projektina ja siis tõin ta siia projekti.
+
 package client.formatting;
 
 import java.util.Iterator;
@@ -23,9 +27,9 @@ public class FormattingParser implements Iterator<TextSection> {
 
     private static boolean allowedInUsername(char ch) {
         return ch >= 'A' && ch <= 'Z' ||
-                ch >= 'a' && ch <= 'z' ||
-                ch >= '0' && ch <= '9' ||
-                ch == '_';
+               ch >= 'a' && ch <= 'z' ||
+               ch >= '0' && ch <= '9' ||
+               ch == '_';
     }
 
     @Override

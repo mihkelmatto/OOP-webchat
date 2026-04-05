@@ -1,5 +1,6 @@
-package client;
+package client.ui;
 
+import client.ClientConnection;
 import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -14,7 +15,7 @@ import java.util.List;
 public class MessageScene extends Scene {
     private final MessageList messages;
 
-    public MessageScene(double w, double h) {
+    public MessageScene(ClientConnection conn, double w, double h) {
         // Midagi peame parentiks panema, paneme HBox
         super(new HBox(), w, h);
 
@@ -30,7 +31,10 @@ public class MessageScene extends Scene {
         // Sõnumite kirjutamiseks
         TextField messageField = new TextField();
         messageField.setOnAction(e -> {
-            sendMessage(messageField.getText());
+            if (messageField.getText().isEmpty()) {
+                return;
+            }
+            conn.sendMessage(messageField.getText());
             messageField.clear();
             Platform.runLater(() -> scrollPane.setVvalue(1.0));
         });
@@ -46,6 +50,10 @@ public class MessageScene extends Scene {
         // Lõpuks vahetame rooti välja
         HBox root = new HBox(channelList, messagesRoot);
         setRoot(root);
+
+        // Kui UI on loodud, kleebime sinna otsa ühenduse serveriga
+        conn.setOnMessageReceived(this::addMessageToUI);
+        Thread.ofVirtual().start(conn);
     }
 
     private static VBox createChannelList(List<String> channels) {
@@ -61,8 +69,10 @@ public class MessageScene extends Scene {
         return channelList;
     }
 
-    private void sendMessage(String content) {
-        String username = "kasutaja"; // todo
-        messages.addMessage(username, content);
+    private synchronized void addMessageToUI(String content) {
+        Platform.runLater(() -> {
+            String username = "kasutaja"; // todo
+            messages.addMessage(username, content);
+        });
     }
 }

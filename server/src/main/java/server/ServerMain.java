@@ -1,7 +1,7 @@
 package server;
 
-public class Main {
+public class ServerMain {
     public static void main(String[] args) {
-        System.out.println("Hello from server!");
+        new ServerConnection().run();
     }
 }

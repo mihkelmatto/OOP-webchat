@@ -1,4 +1,4 @@
-package client;
+package client.ui;
 
 import client.formatting.FormattingParser;
 import client.formatting.TextSection;

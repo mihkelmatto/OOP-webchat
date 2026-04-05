@@ -12,12 +12,12 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 
-public class Connection implements Runnable{
+public class Connection implements Runnable {
     private final Map<String, List<Consumer<byte[]>>> subscribers;
     private final Socket sock;
     private boolean running;
 
-    public Connection(Socket sock){
+    public Connection(Socket sock) {
         this.sock = sock;
         this.subscribers = new ConcurrentHashMap<>();
     }
@@ -28,7 +28,7 @@ public class Connection implements Runnable{
         try (DataInputStream dis = new DataInputStream(sock.getInputStream())) {
             running = true;
             while (running) {
-                int endpointLength = dis.readInt(); 
+                int endpointLength = dis.readInt();
                 byte[] endpointBytes = new byte[endpointLength];
                 dis.readFully(endpointBytes);
                 String endpoint = new String(endpointBytes, java.nio.charset.StandardCharsets.UTF_8);
@@ -51,8 +51,8 @@ public class Connection implements Runnable{
         }
     }
 
-    public boolean send(String endpoint, byte[] payload){
-        try (OutputStream os = sock.getOutputStream()){
+    public boolean send(String endpoint, byte[] payload) {
+        try (OutputStream os = sock.getOutputStream()) {
             DataOutputStream outputStream = new DataOutputStream(os);
             outputStream.writeInt(endpoint.getBytes().length);
             outputStream.write(endpoint.getBytes());
@@ -65,13 +65,13 @@ public class Connection implements Runnable{
     }
 
 
-    public void createEndpoint(String endpoint){
-        if (!subscribers.containsKey(endpoint)){
+    public void createEndpoint(String endpoint) {
+        if (!subscribers.containsKey(endpoint)) {
             subscribers.put(endpoint, new ArrayList<>());
         }
     }
 
-    public void subscribe(String endpoint, Consumer<byte[]> func){
+    public void subscribe(String endpoint, Consumer<byte[]> func) {
         createEndpoint(endpoint);
         subscribers.get(endpoint).add(func);
     }

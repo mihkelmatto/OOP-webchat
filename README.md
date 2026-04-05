@@ -1,3 +1,6 @@
+# serveri_eksperiment
+NB! Kuidas testida: käivita server (intellij kaudu või buildi maveniga ja käivita jar), seejärel võid kasutada näiteks telneti ühendamiseks (`telnet localhost 6969`).
+
 # OOP rühmatöö plaan
 
 NB! Praegu kliendi dev versiooni käivitamiseks minna client kausta ja jooksutata `mvn javafx:run`.
