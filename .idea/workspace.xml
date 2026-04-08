@@ -4,21 +4,14 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="90b41639-bd56-43f6-af8f-05ff91505e64" name="Changes" comment="kliendile natuke kommentaare + mini-mini parandused">
-      <change afterPath="$PROJECT_DIR$/client/src/main/java/client/ui/ChannelList.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/common/src/main/java/common/networking/AbstractPacket.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/common/src/main/java/common/networking/AddChannelResponsePacket.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/common/src/main/java/common/networking/GetChannelsRequestPacket.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/common/src/main/java/common/networking/MessageToClientPacket.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/common/src/main/java/common/networking/MessageToServerPacket.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/common/src/main/java/common/networking/TwoWayConnectionHandler.java" afterDir="false" />
+    <list default="true" id="90b41639-bd56-43f6-af8f-05ff91505e64" name="Changes" comment="jackson packetite jaoks, natuke juba packetitele süsteem üle viidud, aga mite lõplikult">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client/src/main/java/client/ClientConnection.java" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/java/client/ClientConnection.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/src/main/java/client/ui/LoginScene.java" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/java/client/ui/LoginScene.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client/src/main/java/client/ui/MessageScene.java" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/java/client/ui/MessageScene.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/common/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/common/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/common/src/main/java/common/Connection.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/common/src/main/java/common/networking/AddChannelResponsePacket.java" beforeDir="false" afterPath="$PROJECT_DIR$/common/src/main/java/common/networking/AddChannelResponsePacket.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/common/src/main/java/common/networking/MessageToClientPacket.java" beforeDir="false" afterPath="$PROJECT_DIR$/common/src/main/java/common/networking/MessageToClientPacket.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/common/src/main/java/common/networking/MessageToServerPacket.java" beforeDir="false" afterPath="$PROJECT_DIR$/common/src/main/java/common/networking/MessageToServerPacket.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/common/src/main/java/common/networking/TwoWayConnectionHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/common/src/main/java/common/networking/TwoWayConnectionHandler.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/server/src/main/java/server/ConnectionHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/main/java/server/ConnectionHandler.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/server/src/main/java/server/ServerMain.java" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/main/java/server/ServerMain.java" afterDir="false" />
     </list>
@@ -140,7 +133,8 @@
       <workItem from="1774427378261" duration="1894000" />
       <workItem from="1774442676453" duration="10179000" />
       <workItem from="1774786043719" duration="1225000" />
-      <workItem from="1775563742687" duration="5554000" />
+      <workItem from="1775563742687" duration="6447000" />
+      <workItem from="1775570220353" duration="7184000" />
     </task>
     <task id="LOCAL-00001" summary="pom.xml failid">
       <option name="closed" value="true" />
@@ -238,11 +232,30 @@
       <option name="project" value="LOCAL" />
       <updated>1775397750416</updated>
     </task>
-    <option name="localTasksCounter" value="13" />
+    <task id="LOCAL-00013" summary="jackson packetite jaoks, natuke juba packetitele süsteem üle viidud, aga mite lõplikult">
+      <option name="closed" value="true" />
+      <created>1775569347615</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1775569347615</updated>
+    </task>
+    <option name="localTasksCounter" value="14" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="pom.xml failid" />
@@ -257,6 +270,23 @@
     <MESSAGE value="internetindus integreeritud klienti (nii ja naa)" />
     <MESSAGE value="mul läks juba meelest, mis ma tegin, aga ju see oli hea :D" />
     <MESSAGE value="muudatused :D" />
-    <option name="LAST_COMMIT_MESSAGE" value="muudatused :D" />
+    <MESSAGE value="jackson packetite jaoks, natuke juba packetitele süsteem üle viidud, aga mite lõplikult" />
+    <option name="LAST_COMMIT_MESSAGE" value="jackson packetite jaoks, natuke juba packetitele süsteem üle viidud, aga mite lõplikult" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/server/src/main/java/server/ConnectionHandler.java</url>
+          <line>59</line>
+          <option name="timeStamp" value="6" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
+    <pin-to-top-manager>
+      <pinned-members>
+        <PinnedItemInfo parentTag="com.fasterxml.jackson.core.json.ReaderBasedJsonParser" memberName="_inputBuffer" />
+      </pinned-members>
+    </pin-to-top-manager>
   </component>
 </project>

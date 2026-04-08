@@ -1,10 +1,13 @@
 package common.networking;
 
 public class AddChannelResponsePacket extends AbstractPacket {
-    private final String channelName;
+    private String channelName;
 
     public AddChannelResponsePacket(String channelName) {
         this.channelName = channelName;
+    }
+
+    public AddChannelResponsePacket() {
     }
 
     public String getChannelName() {

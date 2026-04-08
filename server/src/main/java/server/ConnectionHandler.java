@@ -4,16 +4,26 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import common.networking.AbstractPacket;
+import common.networking.GetChannelsRequestPacket;
+import common.networking.MessageToClientPacket;
+import common.networking.MessageToServerPacket;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.*;
 import java.net.Socket;
+import java.nio.charset.StandardCharsets;
+import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.concurrent.LinkedBlockingQueue;
 
 /**
  * Haldab ühe kliendi ühendust serveriga.
  */
-public class ConnectionHandler implements Runnable, Closeable {
+public class ConnectionHandler implements Runnable {
+    private static final Logger log = LogManager.getLogger(ConnectionHandler.class);
+
     // Packetite järjekord.
     private final LinkedBlockingQueue<AbstractPacket> queuedPackets = new LinkedBlockingQueue<>();
 
@@ -40,10 +50,13 @@ public class ConnectionHandler implements Runnable, Closeable {
         //  ennast ära tapab siis, kui klient ühenduse katkestab.
         try (BufferedWriter out = new BufferedWriter(new OutputStreamWriter(clientSocket.getOutputStream()))) {
             ObjectMapper objectMapper = new ObjectMapper();
-            JsonParser jsonParser = objectMapper.getFactory().createParser(clientSocket.getInputStream());
 
             Thread receiver = Thread.ofVirtual().start(() -> {
                 try {
+                    // TODO: only instantiate factory once (in common?)
+                    Reader reader = new InputStreamReader(clientSocket.getInputStream(), StandardCharsets.UTF_8);
+                    JsonParser jsonParser = objectMapper.getFactory().createParser(reader);
+
                     while (jsonParser.nextToken() != null && !Thread.currentThread().isInterrupted()) {
                         if (jsonParser.currentToken() == JsonToken.START_OBJECT) {
                             AbstractPacket packet = objectMapper.readValue(jsonParser, AbstractPacket.class);
@@ -51,24 +64,23 @@ public class ConnectionHandler implements Runnable, Closeable {
                         }
                     }
                 } catch (IOException e) {
-                    // TODO: log error, cancel connection
+                    log.error(e);
                 }
             });
 
-            // Siia võib panna mingi muu welcome sõnumi või mis iganes peab
-            // toimuma siis, kui klient ühendab.
-            queueClientMessage("Welcome to the test server!");
-
             // Sõnumeid *saadetakse* selles lõimes.
-            while (!Thread.currentThread().isInterrupted()) {
+            while (!Thread.currentThread().isInterrupted() && receiver.isAlive()) {
                 AbstractPacket packetToBeSent = queuedPackets.take();
-                objectMapper.writeValue(out, packetToBeSent);
+                String asString = objectMapper.writeValueAsString(packetToBeSent);
+                System.out.println("asString = " + asString);
+                out.write(asString);
                 out.flush();
             }
 
             receiver.interrupt();
-        } catch (IOException ignored) {
-            // TODO: log exception, but don't crash!
+            receiver.join();
+        } catch (IOException e) {
+            log.error(e);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         } finally {
@@ -93,29 +105,34 @@ public class ConnectionHandler implements Runnable, Closeable {
     /**
      * Lisab sõnumi selle ühenduse sõnumite järjekorda.
      *
-     * @param message sõnum sõnena
+     * @param message sõnum
      */
-    private void queueClientMessage(String message) {
-        // TODO
-        // queuedPackets.add(message);
+    private void queueClientMessage(MessageToClientPacket message) {
+        queuedPackets.add(message);
     }
 
     /**
-     * Edastab antud sõnumi kõigile teistele ühendatud klientidele.
+     * Edastab sõnumi kõigile ühendatud kasutajatele.
      *
-     * @param message    sõnum sõnena
-     * @param ignoreSelf kas on tarvis ka saatjale tagasi saata?
+     * @param message sõnum
      */
-    private void broadcastMessage(String message, boolean ignoreSelf) {
+    private void broadcastMessage(MessageToServerPacket message) {
+        Timestamp now = Timestamp.from(Instant.now());
+        MessageToClientPacket packetToBeSent = new MessageToClientPacket(message, now);
         for (ConnectionHandler conn : allConnectionHandlers) {
-            if (ignoreSelf && conn == this) {
-                continue;
-            }
-            conn.queueClientMessage(message);
+            conn.queueClientMessage(packetToBeSent);
         }
     }
 
     public void handlePacket(AbstractPacket packet) {
-
+        switch (packet) {
+            case MessageToServerPacket msg -> broadcastMessage(msg);
+            case GetChannelsRequestPacket getChannelsRequest -> {
+                // TODO: send list of channels as individual AddChannelResponsePacket packets
+            }
+            default -> {
+                // TODO: Report unexpected packet
+            }
+        }
     }
 }

@@ -1,16 +1,14 @@
 package client.ui;
 
 import client.ClientConnection;
+import common.networking.MessageToClientPacket;
 import javafx.application.Platform;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
-
-import java.util.List;
 
 /**
  * Stseen sõnumite vaateks. Saab vahetada kanaleid (TBD), kirjutada sõnumeid
@@ -39,7 +37,28 @@ public class MessageScene extends Scene {
         // Scrollib alla kui uus sõnum tuleb
         messages.heightProperty().addListener((obs, oldValue, newValue) -> Platform.runLater(() -> scrollPane.setVvalue(1.0)));
 
-        // Sõnumite kirjutamiseks
+        // Ekraani parempoolne osa (sõnumid ja kast sõnumi kirjutamiseks)
+        VBox messagesRoot = createMessagesSide(conn, channelList, scrollPane);
+
+        // Lõpuks vahetame rooti välja
+        // TODO: kindlasti seda saab kuidagi ilusamalt teha, see on hästi rõve.
+        HBox root = new HBox(channelList, messagesRoot);
+        setRoot(root);
+
+        // Kui UI on loodud, kleebime sinna otsa ühenduse serveriga
+        conn.setOnMessageReceived(this::addMessageToUI);
+        Thread.ofVirtual().start(conn); // See võib failida, peaks tagasi login ekraanile viskama
+    }
+
+    /**
+     * Loob ekraani parempoolse osa, mis sisaldab sõnumeid ka kastikest nende
+     * kirjutamiseks.
+     * @param conn ühendus serveriga
+     * @param channelList kanalite ui komponent
+     * @param scrollPane ScrollPane, mille sees sõnumid istuvad
+     * @return ekraani parempoolne osa
+     */
+    private static VBox createMessagesSide(ClientConnection conn, ChannelList channelList, ScrollPane scrollPane) {
         TextField messageField = new TextField();
         messageField.setOnAction(e -> {
             if (messageField.getText().isEmpty()) {
@@ -50,24 +69,15 @@ public class MessageScene extends Scene {
             Platform.runLater(() -> scrollPane.setVvalue(1.0));
         });
 
-        // Ekraani parempoolne osa (sõnumid ja kast sõnumi kirjutamiseks)
         VBox messagesRoot = new VBox(scrollPane, messageField);
         HBox.setHgrow(messagesRoot, Priority.ALWAYS);
-
-        // Lõpuks vahetame rooti välja
-        // TODO: kindlasti seda saab kuidagi ilusamalt teha, see on hästi rõve.
-        HBox root = new HBox(channelList, messagesRoot);
-        setRoot(root);
-
-        // Kui UI on loodud, kleebime sinna otsa ühenduse serveriga
-        conn.setOnMessageReceived(this::addMessageToUI);
-        Thread.ofVirtual().start(conn);
+        return messagesRoot;
     }
 
-    private void addMessageToUI(String content) {
+    private void addMessageToUI(MessageToClientPacket packet) {
         Platform.runLater(() -> {
-            String username = "kasutaja"; // todo
-            messages.addMessage(username, content);
+            // TODO:
+            messages.addMessage("placeholder", packet.getContent());
         });
     }
 }
