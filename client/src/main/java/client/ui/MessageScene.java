@@ -21,9 +21,10 @@ import java.util.Map;
 public class MessageScene extends Scene {
     // Kõik sõnumid UI komponentidena.
     private final Map<String, MessageList> channels;
-    private String[] channelNames = {"general", "uudised"};
-    private String selectedChannel = channelNames[0];
+    private List<String> channelNames = List.of("general", "uudised");
+    private String selectedChannel = channelNames.get(0);
     private ScrollPane scrollPane;
+    private VBox channelList;
 
 
     public MessageScene(ClientConnection conn, double w, double h) {
@@ -31,13 +32,16 @@ public class MessageScene extends Scene {
         super(new HBox(), w, h);
 
         channels = new HashMap<>();
+        
+        // Vasakpoolne osa, kus on kanalid
+        // TODO: see on ainult UI testimiseks, tuleks küsida kanalite nimekirja serverilt.
+        channelList = new VBox();
+        channelList.setFillWidth(true);
 
         // Sõnumite vaade
         scrollPane = new ScrollPane();
         for (String channelName : channelNames){
-            MessageList messages = new MessageList();
-            messages.heightProperty().addListener((obs, oldValue, newValue) -> Platform.runLater(() -> scrollPane.setVvalue(1.0)));
-            channels.put(channelName, messages);
+            addChannel(channelName);
         }
         scrollPane.setContent(channels.get(selectedChannel));
         scrollPane.setFitToWidth(true);
@@ -52,9 +56,8 @@ public class MessageScene extends Scene {
         VBox messagesRoot = new VBox(scrollPane, messageField);
         HBox.setHgrow(messagesRoot, Priority.ALWAYS);
 
-        // Vasakpoolne osa, kus on kanalid
-        // TODO: see on ainult UI testimiseks, tuleks küsida kanalite nimekirja serverilt.
-        VBox channelList = createChannelList(channelNames);
+
+
 
         // Lõpuks vahetame rooti välja
         // TODO: kindlasti seda saab kuidagi ilusamalt teha, see on hästi rõve.
@@ -96,37 +99,31 @@ public class MessageScene extends Scene {
 
         return messageField;
     }
-
     /**
-     * Initsialiseerib kanalite nimekirja (iga kanal on nupp).
-     *
-     * @param channels kanalite nimed.
-     * @return VBox, mis sisaldab kanaleid nuppudena.
+     * kanali lisamiseks funktsioon. Lisab nupu, 
+     * @param channelName
      */
-    // TODO: see oli kasulik UI testimiseks, aga kui kanalite nimekiri hakkab
-    //  tulema serverilt, peab selle ümber tegema.
-    private VBox createChannelList(String[] channels) {
-        VBox channelList = new VBox();
-        channelList.setFillWidth(true);
-
-        for (String channelName : channels) {
-            Button channelButton = new Button(channelName);
-            channelButton.setMaxWidth(Double.MAX_VALUE);
-            channelButton.setOnAction(e -> {
-                selectedChannel = channelName;
-                scrollPane.setContent(this.channels.get(selectedChannel));
-            });;
-            channelList.getChildren().add(channelButton);
+    private void addChannel(String channelName){
+        if (channels.containsKey(channelName)){
+            return;
         }
-
-        return channelList;
+        MessageList messages = new MessageList();
+        messages.heightProperty().addListener((obs, oldValue, newValue) -> Platform.runLater(() -> scrollPane.setVvalue(1.0)));
+        channels.put(channelName, messages);
+        Button channelButton = new Button(channelName);
+        channelButton.setMaxWidth(Double.MAX_VALUE);
+        channelButton.setOnAction(e -> {
+            selectedChannel = channelName;
+            scrollPane.setContent(this.channels.get(selectedChannel));
+        });;
+        channelList.getChildren().add(channelButton);
     }
 
     /**
      * Lisab sõnumi sõnumite nimekirja. Seda meetodit võib välja kutsuda teisest
      * lõimest!
      *
-     * @param content sõnumi sisu (praegu sõnena, peaks ümber tegema)
+     * @param payload sõnum, kus on username, channelName ja content peavad olema eraldatud "\t;" eraldajaga
      */
     private void addMessageToUI(String payload) {
         // Platform.runLater() paneb selle lambda kuskile järjekorda ja see
