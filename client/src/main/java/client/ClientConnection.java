@@ -31,6 +31,8 @@ public class ClientConnection implements Runnable {
     private Consumer<AddChannelResponsePacket> onChannelAdded = null;
 
     public ClientConnection(String ip, String port) throws UnknownHostException {
+        if (port.isEmpty()){ip = "localhost";} // default to localhost
+        if (port.isEmpty()){port = "6969";} // default to 6969
         this.ip = InetAddress.getByName(ip);
         this.port = Integer.parseInt(port);
     }

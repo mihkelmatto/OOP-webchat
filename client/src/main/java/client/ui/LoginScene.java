@@ -30,8 +30,7 @@ public class LoginScene extends Scene {
 
         // Kui nuppu on vajutatud:
         loginButton.setOnAction(e -> {
-            // TODO: selle kontrolli võiks liigutada ClientConnection konstruktorisse
-            if (ipField.getText().isEmpty() || userField.getText().isEmpty() || passField.getText().isEmpty()) {
+            if (userField.getText().isEmpty() || passField.getText().isEmpty()) {
                 return;
             }
 
