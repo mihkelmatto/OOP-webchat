@@ -10,8 +10,6 @@ import org.apache.logging.log4j.Logger;
 import java.io.*;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
-import java.sql.Timestamp;
-import java.time.Instant;
 import java.util.concurrent.LinkedBlockingQueue;
 
 /**
@@ -24,7 +22,7 @@ public class ConnectionHandler implements Runnable {
     private final LinkedBlockingQueue<AbstractPacket> queuedPackets = new LinkedBlockingQueue<>();
 
     // Viit serveri olekule
-    private final ServerConnection serverConnection;
+    private final ServerMain serverConnection;
 
     // Socket, mille kaudu suhtlus kliendiga käib.
     private final Socket clientSocket;
@@ -32,7 +30,7 @@ public class ConnectionHandler implements Runnable {
     // Ühendatud kasutaja kasutajanimi
     private String username;
 
-    public ConnectionHandler(ServerConnection serverConnection, Socket clientSocket) {
+    public ConnectionHandler(ServerMain serverConnection, Socket clientSocket) {
         this.serverConnection = serverConnection;
         this.clientSocket = clientSocket;
     }
@@ -96,26 +94,12 @@ public class ConnectionHandler implements Runnable {
      *
      * @param message sõnum
      */
-    private void queueClientMessage(MessageToClientPacket message) {
+    public void queueClientMessage(MessageToClientPacket message) {
         queuedPackets.add(message);
     }
 
     private boolean isAuthenticated() {
-        return username == null;
-    }
-
-    /**
-     * Edastab sõnumi kõigile ühendatud kasutajatele.
-     *
-     * @param message sõnum
-     */
-    // TODO: see võiks olla ServerConnection meetod?
-    private void broadcastMessage(MessageToServerPacket message) {
-        Timestamp now = Timestamp.from(Instant.now());
-        MessageToClientPacket packetToBeSent = new MessageToClientPacket(message, username, now);
-        for (ConnectionHandler conn : serverConnection.getAllConnectionHandlers()) {
-            conn.queueClientMessage(packetToBeSent);
-        }
+        return username != null;
     }
 
     public void handlePacket(AbstractPacket packet) {
@@ -125,7 +109,7 @@ public class ConnectionHandler implements Runnable {
         }
 
         switch (packet) {
-            case MessageToServerPacket msg -> broadcastMessage(msg);
+            case MessageToServerPacket msg -> serverConnection.broadcastMessage(msg, username);
             case GetChannelsRequestPacket ignored -> {
                 for (String channel : serverConnection.getChannelList()) {
                     queuedPackets.add(new AddChannelResponsePacket(channel));
