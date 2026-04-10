@@ -1,25 +1,37 @@
 package server;
 
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonToken;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import common.networking.*;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.io.*;
 import java.net.Socket;
-import java.util.concurrent.CopyOnWriteArraySet;
+import java.nio.charset.StandardCharsets;
 import java.util.concurrent.LinkedBlockingQueue;
 
 /**
  * Haldab ühe kliendi ühendust serveriga.
  */
 public class ConnectionHandler implements Runnable {
-    // Sõnumite järjekord.
-    private final LinkedBlockingQueue<String> localMessageEvents = new LinkedBlockingQueue<>();
+    private static final Logger log = LogManager.getLogger(ConnectionHandler.class);
 
-    // Viit kõikide aktiivsete ühenduste hulgale (vajame seda registreerimiseks).
-    private final CopyOnWriteArraySet<ConnectionHandler> allConnectionHandlers;
+    // Packetite järjekord.
+    private final LinkedBlockingQueue<AbstractPacket> queuedPackets = new LinkedBlockingQueue<>();
+
+    // Viit serveri olekule
+    private final ServerMain serverConnection;
 
     // Socket, mille kaudu suhtlus kliendiga käib.
     private final Socket clientSocket;
 
-    public ConnectionHandler(CopyOnWriteArraySet<ConnectionHandler> allConnectionHandlers, Socket clientSocket) {
-        this.allConnectionHandlers = allConnectionHandlers;
+    // Ühendatud kasutaja kasutajanimi
+    private String username;
+
+    public ConnectionHandler(ServerMain serverConnection, Socket clientSocket) {
+        this.serverConnection = serverConnection;
         this.clientSocket = clientSocket;
     }
 
@@ -28,86 +40,92 @@ public class ConnectionHandler implements Runnable {
      */
     @Override
     public void run() {
-        // Registreerime oma ühenduse.
-        register();
+        // Kui ühendus on loodud, siis server jääb ootama kliendilt
+        // LoginPacketit ning alles pärast edukat autentimist tehakse see klient
+        // teistele nähtavaks (registreeritakse).
 
         // TODO: kogu selles asjas on vaja tagada, et see thread viisakalt
         //  ennast ära tapab siis, kui klient ühenduse katkestab.
-        try (PrintWriter out = new PrintWriter(clientSocket.getOutputStream());
-             BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()))
-        ) {
-            // Sisse tulevate sõnumite kuulamine eraldi lõimes.
+        try (BufferedWriter out = new BufferedWriter(new OutputStreamWriter(clientSocket.getOutputStream()))) {
+            ObjectMapper objectMapper = new ObjectMapper();
+
             Thread receiver = Thread.ofVirtual().start(() -> {
-                while (!Thread.currentThread().isInterrupted()) {
-                    try {
-                        String line = in.readLine(); // Blokib
-                        if (line != null) {
-                            // Edastame kõigile, sh endale
-                            broadcastMessage(line, false);
+                try {
+                    // TODO: only instantiate factory once (in common?)
+                    Reader reader = new InputStreamReader(clientSocket.getInputStream(), StandardCharsets.UTF_8);
+                    JsonParser jsonParser = objectMapper.getFactory().createParser(reader);
+                    while (jsonParser.nextToken() != null && !Thread.currentThread().isInterrupted()) {
+                        if (jsonParser.currentToken() == JsonToken.START_OBJECT) {
+                            AbstractPacket packet = objectMapper.readValue(jsonParser, AbstractPacket.class);
+                            handlePacket(packet);
                         }
-                    } catch (IOException ignored) {
-                        break;
                     }
+                } catch (IOException e) {
+                    log.error(e);
                 }
             });
 
-            // Siia võib panna mingi muu welcome sõnumi või mis iganes peab
-            // toimuma siis, kui klient ühendab.
-            queueClientMessage("Welcome to the test server!");
-
-            // Sõnumeid *saadetakse* selles lõimes.
-            while (!Thread.currentThread().isInterrupted()) {
-                String message = localMessageEvents.take(); // Blokib
-                out.println(message);
-                out.flush(); // TODO: tegelt pole hea iga kord flushida, aga see tekitas varem mingeid probleeme
+            // Sõnumeid saadetakse selles lõimes.
+            while (!Thread.currentThread().isInterrupted() && receiver.isAlive()) {
+                AbstractPacket packetToBeSent = queuedPackets.take();
+                String asString = objectMapper.writeValueAsString(packetToBeSent);
+                out.write(asString);
+                out.flush();
             }
 
             receiver.interrupt();
-        } catch (IOException ignored) {
-            // TODO: log exception, but don't crash!
+            receiver.join();
+        } catch (IOException e) {
+            log.error(e);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         } finally {
-            unregister();
+            serverConnection.unregister(this);
+            try {
+                clientSocket.close();
+            } catch (IOException e) {
+                log.error(e);
+            }
         }
-    }
-
-    /**
-     * Lisab selle ühenduse aktiivsete ühenduste hulka.
-     */
-    private void register() {
-        allConnectionHandlers.add(this);
-    }
-
-    /**
-     * Eemaldab selle ühenduse aktiivsete ühenduste hulgast.
-     */
-    private void unregister() {
-        allConnectionHandlers.remove(this);
     }
 
     /**
      * Lisab sõnumi selle ühenduse sõnumite järjekorda.
      *
-     * @param message sõnum sõnena
+     * @param message sõnum
      */
-    // Varem oli see synchronized, aga nüüd vist pole tarvis?
-    private void queueClientMessage(String message) {
-        localMessageEvents.add(message);
+    public void queueClientMessage(MessageToClientPacket message) {
+        queuedPackets.add(message);
     }
 
-    /**
-     * Edastab antud sõnumi kõigile teistele ühendatud klientidele.
-     *
-     * @param message    sõnum sõnena
-     * @param ignoreSelf kas on tarvis ka saatjale tagasi saata?
-     */
-    private void broadcastMessage(String message, boolean ignoreSelf) {
-        for (ConnectionHandler conn : allConnectionHandlers) {
-            if (ignoreSelf && conn == this) {
-                continue;
+    private boolean isAuthenticated() {
+        return username != null;
+    }
+
+    public void handlePacket(AbstractPacket packet) {
+        // Kui pole veel autentinud, siis me teisi asju ei parsi
+        if (!isAuthenticated() && !(packet instanceof LoginPacket)) {
+            return;
+        }
+
+        switch (packet) {
+            case MessageToServerPacket msg -> serverConnection.broadcastMessage(msg, username);
+            case GetChannelsRequestPacket ignored -> {
+                for (String channel : serverConnection.getChannelList()) {
+                    queuedPackets.add(new AddChannelResponsePacket(channel));
+                }
             }
-            conn.queueClientMessage(message);
+            case LoginPacket login -> {
+                // TODO: peame ka reaalselt salasõna kontrollima. kuigi ilmselt
+                //  peaks saatma salasõna räsi, mitte lihtsalt plaintextina.
+                username = login.getUsername();
+
+                // Registreerime oma ühenduse.
+                serverConnection.register(this);
+            }
+            default -> {
+                log.warn("Unexpected packet: {}", packet);
+            }
         }
     }
 }

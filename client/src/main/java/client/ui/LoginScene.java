@@ -30,13 +30,12 @@ public class LoginScene extends Scene {
 
         // Kui nuppu on vajutatud:
         loginButton.setOnAction(e -> {
-            // TODO: selle kontrolli võiks liigutada ClientConnection konstruktorisse
-            if (ipField.getText().isEmpty() || userField.getText().isEmpty() || passField.getText().isEmpty()) {
+            if (userField.getText().isEmpty() || passField.getText().isEmpty()) {
                 return;
             }
 
             try {
-                ClientConnection conn = new ClientConnection(userField.getText(), ipField.getText(), portField.getText());
+                ClientConnection conn = new ClientConnection(ipField.getText(), portField.getText(), userField.getText(), passField.getText());
                 switchScene.accept(new MessageScene(conn, w, h));
             } catch (UnknownHostException ex) {
                 // TODO: log error
