@@ -25,7 +25,7 @@ public class ClientConnection implements Runnable {
     private final InetAddress ip;
     private final int port;
     private final String username;
-    private String password;
+    private final String password;
 
     private final LinkedBlockingQueue<AbstractPacket> queuedPackets = new LinkedBlockingQueue<>();
 
@@ -33,8 +33,12 @@ public class ClientConnection implements Runnable {
     private Consumer<AddChannelResponsePacket> onChannelAdded = null;
 
     public ClientConnection(String ip, String port, String username, String password) throws UnknownHostException {
-        if (port.isEmpty()){ip = "localhost";} // default to localhost
-        if (port.isEmpty()){port = "6969";} // default to 6969
+        if (port.isEmpty()) {
+            ip = "localhost";
+        } // default to localhost
+        if (port.isEmpty()) {
+            port = "6969";
+        } // default to 6969
         this.ip = InetAddress.getByName(ip);
         this.port = Integer.parseInt(port);
         this.username = username;
@@ -54,6 +58,9 @@ public class ClientConnection implements Runnable {
             try (BufferedWriter out = new BufferedWriter(new OutputStreamWriter(sock.getOutputStream()))) {
                 ObjectMapper objectMapper = new ObjectMapper();
 
+                // Autentimine enne sõnumite saatmist
+                queuedPackets.add(new LoginPacket(username, password));
+
                 // Sõnumite kuulamine eraldi lõimes.
                 Thread receiver = Thread.ofVirtual().start(() -> {
                     try {
@@ -69,17 +76,11 @@ public class ClientConnection implements Runnable {
                         log.error(e);
                     }
                 });
-                String packet;
-                // autentimine enne sõnumite saatmist
-                AbstractPacket loginPacket = new LoginPacket(username, password);
-                packet = objectMapper.writeValueAsString(loginPacket);
-                out.write(packet);
-                out.flush();
 
                 // Sõnumite saatmine siin lõimes.
                 while (!Thread.currentThread().isInterrupted()) {
                     AbstractPacket packetToBeSent = queuedPackets.take();
-                    packet = objectMapper.writeValueAsString(packetToBeSent);
+                    String packet = objectMapper.writeValueAsString(packetToBeSent);
                     out.write(packet);
                     out.flush();
                 }
@@ -96,6 +97,7 @@ public class ClientConnection implements Runnable {
 
     /**
      * Määrab tegevuse, mis on tarvis teha saabunud sõnumi korral.
+     *
      * @param onMessageReceived event handler
      */
     public void setOnMessageReceived(Consumer<MessageToClientPacket> onMessageReceived) {
@@ -108,6 +110,7 @@ public class ClientConnection implements Runnable {
 
     /**
      * Lisab sõnumi järjekorda, et see serverile saata.
+     *
      * @param message sõnum.
      */
     public void sendMessage(String targetChannel, String message) {
@@ -119,7 +122,8 @@ public class ClientConnection implements Runnable {
         switch (packet) {
             // TODO: check that onMessageReceived is not null
             case MessageToClientPacket msg -> onMessageReceived.accept(msg);
-            case AddChannelResponsePacket addChannelResponse -> onChannelAdded.accept(addChannelResponse);
+            case AddChannelResponsePacket addChannelResponse ->
+                    onChannelAdded.accept(addChannelResponse);
             default -> {
                 // TODO: report unexpected packet
             }

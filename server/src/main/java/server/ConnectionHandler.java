@@ -6,14 +6,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import common.networking.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.core.jmx.Server;
 
 import java.io.*;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
 import java.sql.Timestamp;
 import java.time.Instant;
-import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.concurrent.LinkedBlockingQueue;
 
 /**
@@ -27,10 +25,12 @@ public class ConnectionHandler implements Runnable {
 
     // Viit serveri olekule
     private final ServerConnection serverConnection;
-    private String username;
 
     // Socket, mille kaudu suhtlus kliendiga käib.
     private final Socket clientSocket;
+
+    // Ühendatud kasutaja kasutajanimi
+    private String username;
 
     public ConnectionHandler(ServerConnection serverConnection, Socket clientSocket) {
         this.serverConnection = serverConnection;
@@ -42,8 +42,9 @@ public class ConnectionHandler implements Runnable {
      */
     @Override
     public void run() {
-        // Registreerime oma ühenduse.
-        serverConnection.register(this);
+        // Kui ühendus on loodud, siis server jääb ootama kliendilt
+        // LoginPacketit ning alles pärast edukat autentimist tehakse see klient
+        // teistele nähtavaks (registreeritakse).
 
         // TODO: kogu selles asjas on vaja tagada, et see thread viisakalt
         //  ennast ära tapab siis, kui klient ühenduse katkestab.
@@ -55,18 +56,9 @@ public class ConnectionHandler implements Runnable {
                     // TODO: only instantiate factory once (in common?)
                     Reader reader = new InputStreamReader(clientSocket.getInputStream(), StandardCharsets.UTF_8);
                     JsonParser jsonParser = objectMapper.getFactory().createParser(reader);
-                    // sisse logimine esimesena
-                    AbstractPacket packet = objectMapper.readValue(jsonParser, AbstractPacket.class);
-                    switch (packet){
-                        case LoginPacket p -> {
-                            username = p.getUsername();
-                        }
-                        default ->{}
-                    }
-
                     while (jsonParser.nextToken() != null && !Thread.currentThread().isInterrupted()) {
                         if (jsonParser.currentToken() == JsonToken.START_OBJECT) {
-                            packet = objectMapper.readValue(jsonParser, AbstractPacket.class);
+                            AbstractPacket packet = objectMapper.readValue(jsonParser, AbstractPacket.class);
                             handlePacket(packet);
                         }
                     }
@@ -75,9 +67,7 @@ public class ConnectionHandler implements Runnable {
                 }
             });
 
-            //while (username == null) // ootame, kuni on autentimine lõpuni jõudnud
-
-            // Sõnumeid *saadetakse* selles lõimes.
+            // Sõnumeid saadetakse selles lõimes.
             while (!Thread.currentThread().isInterrupted() && receiver.isAlive()) {
                 AbstractPacket packetToBeSent = queuedPackets.take();
                 String asString = objectMapper.writeValueAsString(packetToBeSent);
@@ -110,11 +100,16 @@ public class ConnectionHandler implements Runnable {
         queuedPackets.add(message);
     }
 
+    private boolean isAuthenticated() {
+        return username == null;
+    }
+
     /**
      * Edastab sõnumi kõigile ühendatud kasutajatele.
      *
      * @param message sõnum
      */
+    // TODO: see võiks olla ServerConnection meetod?
     private void broadcastMessage(MessageToServerPacket message) {
         Timestamp now = Timestamp.from(Instant.now());
         MessageToClientPacket packetToBeSent = new MessageToClientPacket(message, username, now);
@@ -124,6 +119,11 @@ public class ConnectionHandler implements Runnable {
     }
 
     public void handlePacket(AbstractPacket packet) {
+        // Kui pole veel autentinud, siis me teisi asju ei parsi
+        if (!isAuthenticated() && !(packet instanceof LoginPacket)) {
+            return;
+        }
+
         switch (packet) {
             case MessageToServerPacket msg -> broadcastMessage(msg);
             case GetChannelsRequestPacket ignored -> {
@@ -131,8 +131,16 @@ public class ConnectionHandler implements Runnable {
                     queuedPackets.add(new AddChannelResponsePacket(channel));
                 }
             }
+            case LoginPacket login -> {
+                // TODO: peame ka reaalselt salasõna kontrollima. kuigi ilmselt
+                //  peaks saatma salasõna räsi, mitte lihtsalt plaintextina.
+                username = login.getUsername();
+
+                // Registreerime oma ühenduse.
+                serverConnection.register(this);
+            }
             default -> {
-                // TODO: Report unexpected packet
+                log.warn("Unexpected packet: {}", packet);
             }
         }
     }
